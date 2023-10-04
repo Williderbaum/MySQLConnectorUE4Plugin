@@ -10,16 +10,14 @@ public class MySQLConnectorUE4Plugin : ModuleRules
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
-				"MySQLConnectorPlugin4UE4/Public"
-				// ... add public include paths required here ...
+				Path.Combine(ModuleDirectory,"Public"),
 			}
 			);
 				
 		
 		PrivateIncludePaths.AddRange(
 			new string[] {
-				"MySQLConnectorPlugin4UE4/Private",
-				// ... add other private include paths required here ...
+				 Path.Combine(ModuleDirectory,"Private"),
 			}
 			);
 			
