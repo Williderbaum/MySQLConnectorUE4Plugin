@@ -1,7 +1,7 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
-
+using System.IO;
 public class MySQLConnectorUE4Plugin : ModuleRules
 {
 	public MySQLConnectorUE4Plugin(ReadOnlyTargetRules Target) : base(Target)
