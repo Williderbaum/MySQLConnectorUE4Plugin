@@ -14,9 +14,11 @@ public class MariaDBConnectorLibs: ModuleRules
         if (Target.Platform == UnrealTargetPlatform.Win64)
 		{
 			// Add the import library
-			PublicLibraryPaths.Add(Path.Combine(ModuleDirectory, "MariaDB_Connector_C_64-bit", "lib")); 
+			//PublicLibraryPaths.Add(Path.Combine(ModuleDirectory, "MariaDB_Connector_C_64-bit", "lib")); 
 			//PublicAdditionalLibraries.Add("libmariadb.lib");
-			PublicAdditionalLibraries.Add("mariadbclient.lib");	
+			//PublicAdditionalLibraries.Add("mariadbclient.lib");	
+
+   			PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "MariaDB_Connector_C_64-bit", "lib","mariadbclient.lib"));	
 			
 			// Delay-load the DLL, so we can load it from the right place first	
 			//PublicDelayLoadDLLs.Add("libmariadb.dll");				
