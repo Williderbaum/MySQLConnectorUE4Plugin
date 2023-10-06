@@ -154,7 +154,7 @@ MySQLConnectorQueryResult FMySQLConnection::RunQueryAndGetResults(const FString&
 	TArray<MySQLConnectorResultValue> resultRows;
 
 	MYSQL_ROW row;
-	while ((row = mysql_fetch_row(result)))
+	while ((row = mysql_fetch_row(result)) != nullptr)
 	{
 		MySQLConnectorResultValue rowVal;
 
