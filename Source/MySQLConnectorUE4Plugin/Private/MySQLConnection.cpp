@@ -130,20 +130,20 @@ MySQLConnectorQueryResult FMySQLConnection::RunQueryAndGetResults(const FString&
 
 	int num_fields = mysql_num_fields(result);
 
-	TArray<int> fieldTypes;
-	TArray<FString> fieldNames;
+	TArray<enum_field_types> fieldTypes;
+	TArray<const char*> fieldNames;
 
-	MYSQL_FIELD* fields;
-	fields = mysql_fetch_fields(result);
-	if (fields)
+	
+	
+	if(MYSQL_FIELD* fields = mysql_fetch_fields(result))
 	{
 		for (int i = 0; i < num_fields; i++)
 		{
-			FString NewString = FString::FromInt(fields[i].type);
+			//FString NewString = FString::FromInt(fields[i].type);
 			//GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Cyan, TEXT("MySQLConnector: Type is:") + NewString);
 
-			fieldTypes.Add(fields[i].type);
-			fieldNames.Add(UTF8_TO_TCHAR(fields[i].name));
+			fieldTypes.Emplace(fields[i].type);
+			fieldNames.Emplace(fields[i].name);
 		}
 	}
 
@@ -154,39 +154,18 @@ MySQLConnectorQueryResult FMySQLConnection::RunQueryAndGetResults(const FString&
 	TArray<MySQLConnectorResultValue> resultRows;
 
 	MYSQL_ROW row;
-	while ((row = mysql_fetch_row(result)))
+	while ((row = mysql_fetch_row(result)) != nullptr)
 	{
 		MySQLConnectorResultValue rowVal;
 
 		for (int i = 0; i < num_fields; i++)
 		{
-			MySQLConnectorResultField val;
-
-			FString columnNameStr = fieldNames[i];
-			val.Name = columnNameStr;
-
-			FString fieldValueStr = (UTF8_TO_TCHAR(row[i]));
-
-			switch (fieldTypes[i])
-			{
-			case enum_field_types::MYSQL_TYPE_LONG:
-				val.Type = MySQLConnectorResultValueTypes::Int;
-				val.IntValue = FCString::Atoi(*fieldValueStr);
-				break;
-			case enum_field_types::MYSQL_TYPE_VAR_STRING:
-				val.Type = MySQLConnectorResultValueTypes::Varchar;
-				val.StringValue = fieldValueStr;
-				break;
-			default:
-				val.Type = MySQLConnectorResultValueTypes::UnsupportedValueType;
-				val.IntValue = FCString::Atoi(*fieldValueStr);
-				val.StringValue = fieldValueStr;
-			}
-
-			rowVal.Fields.Add(val);
+			MySQLConnectorResultField val(row[i], fieldNames[i], fieldTypes[i]);
+									
+			rowVal.Fields.Emplace(val);
 		}
 
-		resultRows.Add(rowVal);
+		resultRows.Emplace(rowVal);
 	}
 
 	mysql_free_result(result);
