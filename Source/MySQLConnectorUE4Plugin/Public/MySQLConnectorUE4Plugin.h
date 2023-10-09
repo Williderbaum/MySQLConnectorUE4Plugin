@@ -1,10 +1,31 @@
 #pragma once
 
-#include "CoreUObject.h"
+#include "CoreMinimal.h"
+#include "Modules/ModuleManager.h"
+#include "MySQLConnection.h"
 
-//#include "SQLiteDatabase.h"
-//#include "SQLiteBlueprintFunctionLibrary.h"
-//#include "SQLiteBlueprintNodes.h"
+class FToolBarBuilder;
+class FMenuBuilder;
 
+class FMySQLConnectorUE4Plugin : public IModuleInterface
+{
+public:
 
-DECLARE_LOG_CATEGORY_EXTERN(LogMySQL_Database, All, All);
+	/** IModuleInterface implementation */
+	virtual void StartupModule() override;
+	virtual void ShutdownModule() override;
+
+	/** This function will be bound to Command (by default it will bring up plugin window) */
+	void PluginButtonClicked();
+
+	FMySQLConnection& GetDBConnection() { return MysqlConnection; }
+private:
+	FMySQLConnection MysqlConnection;
+
+	//void RegisterMenus();
+
+	//TSharedRef<class SDockTab> OnSpawnPluginTab(const class FSpawnTabArgs& SpawnTabArgs);
+
+//private:
+//	TSharedPtr<class FUICommandList> PluginCommands;
+};

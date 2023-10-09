@@ -39,9 +39,12 @@ public class MySQLConnectorUE4Plugin : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+                "PropertyEditor",
+				"MMO"
+
 				// ... add private dependencies that you statically link with here ...	
 			}
-			);
+            );
 		
 		
 		DynamicallyLoadedModuleNames.AddRange(

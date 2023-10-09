@@ -1,27 +1,26 @@
-#include "CreatureDetails.h"
+#include "GameobjectDetails.h"
 #include "IDetailsView.h"
 #include "DetailLayoutBuilder.h"
 #include "DetailCategoryBuilder.h"
 #include "DetailWidgetRow.h"
-#include "Entities/Creature.h"
+#include "Entities/Gameobject.h"
 #include "ObjectProperties.h"
 #include "MySQLConnectorUE4Plugin.h"
 
 
 
-
-FCreatureDetails::~FCreatureDetails()
+FGameobjectDetails::~FGameobjectDetails()
 {
-	for(const auto& info : CreatureInfos)
+	for(const auto& info : GameobjectInfos)
 		info->RemoveFromRoot();
 }
 
-TSharedRef<IDetailCustomization> FCreatureDetails::MakeInstance()
+TSharedRef<IDetailCustomization> FGameobjectDetails::MakeInstance()
 {
-	return TSharedRef<IDetailCustomization>(new FCreatureDetails);
+	return TSharedRef<IDetailCustomization>(new FGameobjectDetails);
 }
 
-void FCreatureDetails::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
+void FGameobjectDetails::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 {
 
 	TArray<TWeakObjectPtr<UObject>> selectedObjects;
@@ -44,10 +43,10 @@ void FCreatureDetails::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 
 	for (const auto& object : selectedObjects)
 	{
-		ACreature* creature = Cast<ACreature>(object);
-		UCreatureInfo* info = NewObject<UCreatureInfo>();
+		AGameObject* go = Cast<AGameObject>(object);
+		UGameobjectInfo* info = NewObject<UGameobjectInfo>();
 		info->AddToRoot();
-		FString query = FString::Printf(TEXT("SELECT * FROM creature WHERE guid %ui"),creature->GetGUID());
+		FString query = FString::Printf(TEXT("SELECT * FROM creature WHERE guid %ui"),go->GetGUID());
 
 		UE_LOG(LogTemp, Warning, TEXT("query: %s"), *query);
 		/*
@@ -68,12 +67,12 @@ void FCreatureDetails::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 			UE_LOG(LogTemp, Error, TEXT("Error: %s"), *result.ErrorMessage);
 		}*/
 		//set values from selected objects
-		info->Position = FVector3f(creature->GetActorLocation());
+		info->Position = FVector3f(go->GetActorLocation());
 
-		CreatureInfos.Emplace(info);
+		GameobjectInfos.Emplace(info);
 	}
 
-	PropertyWidget->SetObjects(CreatureInfos);
+	PropertyWidget->SetObjects(GameobjectInfos);
 
 
     CustomCategory.AddCustomRow(FText::FromString("Outline Color Changing Category"))
@@ -95,7 +94,7 @@ void FCreatureDetails::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 				SNew(SButton)
 					.VAlign(VAlign_Center)
 					.HAlign(HAlign_Center)
-					.OnClicked(this, &FCreatureDetails::ClickedOnButton)
+					.OnClicked(this, &FGameobjectDetails::ClickedOnButton)
 					.Content()
 					[
 						SNew(STextBlock).Text(FText::FromString("Update Database!"))
@@ -104,11 +103,11 @@ void FCreatureDetails::CustomizeDetails(IDetailLayoutBuilder& DetailBuilder)
 	];
 }
 
-FReply FCreatureDetails::ClickedOnButton()
+FReply FGameobjectDetails::ClickedOnButton()
 {
 	FMySQLConnectorUE4Plugin& dbEditor = FModuleManager::LoadModuleChecked<FMySQLConnectorUE4Plugin>("FMySQLConnectorUE4Plugin");
 	
-	FString query("Update creature Set map = 1 Where guid = 11;");
+	FString query("Update gameobject Set map = 1 Where guid = 11;");
 	dbEditor.GetDBConnection().MySQLConnectorExecuteQuery(query);
 
 	return FReply::Handled();
